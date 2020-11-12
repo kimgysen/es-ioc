@@ -1,5 +1,5 @@
 import { Component, Inject } from "../../../../../../js/ioc/src/api";
-import ManagedType from "../../../../../../js/ioc/src/lib/ManagedType";
+import ManagedType from "../../../../../../js/ioc/src/lib/enum/ManagedType";
 
 
 @Component(ManagedType.SINGLETON)

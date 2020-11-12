@@ -2,7 +2,7 @@
 import config from './config';
 
 import {
-	getContainer
+	getManualContainer
 } from "../../../../../js/ioc/src/api";
 
 console.log('*************************************');
@@ -11,7 +11,7 @@ console.log('*************************************');
 
 
 try {
-	const manualContainer = getContainer('manual-container');
+	const manualContainer = getManualContainer('manual-container');
 	manualContainer.fromJSON(config);
 
 	const cont1_singleton1 = manualContainer.get('manualDemoSingleton');

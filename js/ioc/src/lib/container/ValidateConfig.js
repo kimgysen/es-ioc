@@ -1,8 +1,12 @@
-import ManagedType from "./ManagedType";
+import ManagedType from "../enum/ManagedType";
 
 
+/**
+ * Validate configuration to import json on manual container
+ * @param {object} config Configuration json to import
+ * @returns {boolean} isValid
+ */
 export const validateConfig = config => {
-
 	if (!isObject(config)) {
 		throw new Error('Passed in config is not an object');
 	}
@@ -23,6 +27,11 @@ export const validateConfig = config => {
 
 }
 
+
+/**
+ * Validate managedType parameter
+ * @param {object} props Configuration properties
+ */
 const validateManagedType = props => {
 	if (!props.managedType) {
 		throw new Error('managedType key is missing');
@@ -34,6 +43,11 @@ const validateManagedType = props => {
 	}
 }
 
+
+/**
+ * Validate managedType parameter
+ * @param {object} props Configuration properties
+ */
 const validateDependencies = props => {
 	if (props.dependencies && !Array.isArray(props.dependencies)) {
 		throw new Error('dependencies prop must be an array')
@@ -64,11 +78,19 @@ const validateClass = (props) => {
 }
 
 
-// Utility functions
-
+/**
+ * Check if parameter is an object
+ * @param obj Parameter to check
+ * @returns {boolean} Parameter is an object
+ */
 const isObject = obj => typeof obj === 'object' && obj !== null;
 
 
+/**
+ * Parameter is a function
+ * @param {object} obj
+ * @returns {boolean} Parameter is a function
+ */
 const isFunction = obj => {
 	const isCtorClass = obj.constructor
 		&& obj.constructor.toString().substring(0, 5) === 'function'

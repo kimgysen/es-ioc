@@ -1,5 +1,6 @@
-import Container from "./Container";
-import {strMapToObj} from "../util/jsonUtil";
+import Container from "./container/Container";
+import ManualContainer from './container/ManualContainer';
+import {mapToObj} from "../util/jsonUtil";
 
 
 let scopedContainer = '';
@@ -8,13 +9,63 @@ const containerRegistry = new Map();
 const componentRegistry = new Map();
 const dependencyRegistry = new Map();
 
+
+/**
+ * Get container name for which a component is currently being requested
+ * @returns {string} Returns the scoped container name
+ */
 const getScopedContainer = () => scopedContainer;
 
 
-const	getContainer = (name, options) => {
-		return findOrdCreateContainer(name);
-	}
+/**
+ * Get container from ApplicationContext
+ * @param {string} name Name of the container
+ * @returns {object} Returns a proxy to the original container
+ */
+const	getContainer = (name) => findOrdCreateContainer(name);
 
+
+/**
+ * Get container from ApplicationContext
+ * Manual means that the container registers its dependencies manually, not through decorators / annotations
+ * @param name
+ * @returns {*}
+ */
+const getManualContainer = name => findOrdCreateContainer(name, true);
+
+
+/**
+ * Find or create and register a new container
+ * @param {string} name Name of the container
+ * @param {boolean} isManual Indicates whether the container registers components manually, or automagically (annotations)
+ * @returns {object} Returns a proxy to the original container
+ */
+const findOrdCreateContainer = (name, isManual = false) =>
+	containerRegistry.get(name)
+	|| registerNewContainer(name, isManual);
+
+
+/**
+ * Registers a proxy container to the ApplicationContext
+ * @param {string} name Name of the container
+ * @param {boolean} isManual Indicates whether the container registers components manually, or automagically (annotations)
+ * @returns {object} Returns a proxy to the original container
+ */
+const registerNewContainer = (name, isManual) => {
+	const container = isManual ?
+		new ManualContainer(name)
+	: new Container(name);
+	const proxy = getContainerProxy(container);
+	containerRegistry.set(name, proxy);
+	return proxy;
+}
+
+/**
+ * Create proxy object from a native container
+ * This sets the current containerScope when a component is requested from a container
+ * @param {object} container The original container
+ * @returns {object} A proxy to the original container
+ */
 const getContainerProxy = container => {
 	return new Proxy(container, {
 		get: (target, prop) => {
@@ -29,52 +80,68 @@ const getContainerProxy = container => {
 	})
 }
 
-const registerNewContainer = name => {
-	const container = new Container(name);
-	const proxy = getContainerProxy(container);
-	containerRegistry.set(name, proxy);
-	return proxy;
+
+/**
+ * Registers a component to the ApplicationContext
+ * @param {string} key
+ * @param {object} component Component to be registered
+ */
+const registerComponent = (key, component) => {
+	componentRegistry.set(key, component);
 }
 
-const registerComponent = (registryKey, component) => {
-	componentRegistry.set(registryKey, component);
-}
+/**
+ * Get component from the ApplicationContext
+ * @param {string} key Component key
+ * @returns {object} Returns the requested component
+ */
+const getComponent = key => componentRegistry.get(key);
 
-const getComponent = registryKey => componentRegistry.get(registryKey);
-
-const registerDependency = (registryKey, dependency) => {
-	const dependencies = dependencyRegistry.get(registryKey) || [];
-	dependencies.push(dependency);
-	dependencyRegistry.set(registryKey, dependencies);
-
-	// Let's also add a key for dependencies objects that don't have dependencies themselves
-	// This makes it easier to print out the entire dependency tree
+/**
+ * Register dependency to the ApplicationContext
+ * The dependency registry is formatted as { 'dependent': [ dependencies ] }
+ * @param {string} key Component key
+ * @param {string} dependency
+ */
+const registerDependency = (key, dependency) => {
 	if (!dependencyRegistry.get(dependency))
 		dependencyRegistry.set(dependency, [])
+
+	const dependencies = dependencyRegistry.get(key) || [];
+	dependencies.push(dependency);
+	dependencyRegistry.set(key, dependencies);
+
 }
 
-const getDependencies = registryKey => dependencyRegistry.get(registryKey);
+/**
+ * Get dependencies from ApplicationContext
+ * @param {string} key Component key
+ * @returns {array} Dependencies for a component as an array of key strings
+ */
+const getDependencies = key => dependencyRegistry.get(key);
 
-const findOrdCreateContainer = (name) =>
-	containerRegistry.get(name)
-		|| registerNewContainer(name);
 
-
-const getTree = pContainer => {
+/**
+ * Get dependency tree for container
+ * @param {object} container Proxy to the original container
+ * @returns {object} Json tree
+ */
+const getTree = container => {
 	const containerComponents = containerRegistry
-		.get(pContainer.name)
+		.get(container.name)
 		.getAllComponents();
 
 	const dependencies = new Map([...dependencyRegistry]
 		.filter(([key]) => containerComponents.includes(key)));
 
-	return strMapToObj(dependencies);
+	return mapToObj(dependencies);
 }
 
 
 export default {
 	getScopedContainer,
 	getContainer,
+	getManualContainer,
 	registerComponent,
 	getComponent,
 	registerDependency,

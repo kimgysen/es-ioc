@@ -1,5 +1,5 @@
 import {Component} from "../../../../../../js/ioc/src/api";
-import ManagedType from "../../../../../../js/ioc/src/lib/ManagedType";
+import ManagedType from "../../../../../../js/ioc/src/lib/enum/ManagedType";
 
 
 export default class ManualDepProto {

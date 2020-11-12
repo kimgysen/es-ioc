@@ -1,17 +1,16 @@
 
-import { ComponentDecorator, InjectDecorator } from "../lib/decorators";
+import { ComponentDecorator, InjectDecorator } from "../lib/decorator/Decorators";
 import ApplicationContext from "../lib/ApplicationContext";
 
 
 export const Component = managedType =>
-	ComponentDecorator(ApplicationContext, managedType);
+	ComponentDecorator(managedType);
 
 
 export const Inject = () =>
-	InjectDecorator(ApplicationContext);
+	InjectDecorator();
 
 
 export const getContainer = ApplicationContext.getContainer;
-export const registerComponent = ApplicationContext.registerComponent;
-export const getTree = ApplicationContext.getTree;
+export const getManualContainer = ApplicationContext.getManualContainer;
 

@@ -1,5 +1,5 @@
 
-import ManagedType from "../../../../../js/ioc/src/lib/ManagedType";
+import ManagedType from "../../../../../js/ioc/src/lib/enum/ManagedType";
 import ManualDemoSingleton from "./components/ManualDemoSingleton";
 import ManualDemoSingleton2 from "./components/ManualDemoSingleton2";
 import ManualDepSingleton from "./components/ManualDepSingleton";

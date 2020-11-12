@@ -1,12 +1,16 @@
 
-export const strMapToObj = strMap => {
+/**
+ * Convert map to object
+ * @param {map} pMap es6 map
+ * @returns {object} Returns the converted object
+ */
+export const mapToObj = pMap => {
 	let obj = Object.create(null);
 
-	for (let [k,v] of strMap) {
+	for (let [k,v] of pMap) {
 		obj[k] = v;
 	}
 
 	return obj;
 
 }
-
