@@ -2,24 +2,32 @@
   "name": "simple-ioc",
   "version": "1.0.0",
   "description": "Multi-container ioc with decorators",
-  "main": "src/index.js",
+  "main": "src/js/index.js",
   "scripts": {
-    "compile": "babel -d lib/ src/",
-    "prepublish": "npm run compile"
+    "start": "npm run build:dev",
+    "build:dev": "webpack-dev-server --env dev --mode none",
+    "build:dev:dist": "webpack --env dev",
+    "build:prod": "webpack --env prod --mode production"
   },
   "author": "Kim Gysen <kim.gysen@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.12.1",
-    "@babel/core": "^7.12.3",
+    "@babel/core": "^7.8.3",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-decorators": "^7.12.1",
     "@babel/plugin-proposal-private-methods": "^7.12.1",
     "@babel/plugin-transform-destructuring": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "babel-loader": "^8.0.6",
-    "babel-preset-minify": "^0.5.1",
     "clean-webpack-plugin": "^0.1.19",
-    "jsdoc": "^3.6.6"
+    "html-webpack-plugin": "^4.5.0",
+    "jsdoc": "^3.6.6",
+    "terser-webpack-plugin": "^5.0.3",
+    "webpack": "^5.4.0",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.11.0"
+  },
+  "dependencies": {
+    "treeify": "^1.1.0"
   }
 }
