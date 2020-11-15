@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "compile": "babel -d lib/ src/",
-    "prepublish": "npm run compile"
+    "prepublish": "npm run compile",
+    "test": "jest"
   },
   "author": "Kim Gysen <kim.gysen@gmail.com>",
   "license": "ISC",
@@ -20,6 +21,7 @@
     "babel-loader": "^8.0.6",
     "babel-preset-minify": "^0.5.1",
     "clean-webpack-plugin": "^0.1.19",
+    "jest": "^26.6.3",
     "jsdoc": "^3.6.6"
   }
 }

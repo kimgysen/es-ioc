@@ -1,15 +1,14 @@
 
-import { ComponentDecorator, InjectDecorator } from "./lib/decorator/Decorators";
+import {ComponentDecorator, InjectDecorator, ConfigDecorator } from "./lib/decorator/Decorators";
 import pManagedType from "./lib/enum/ManagedType";
 import ApplicationContext from "./lib/ApplicationContext";
 
 
-export const Component = managedType =>
-	ComponentDecorator(managedType);
+export const Component = managedType => ComponentDecorator(managedType);
 
+export const Inject = () => InjectDecorator();
 
-export const Inject = () =>
-	InjectDecorator();
+export const Configuration = () => ConfigDecorator();
 
 
 export const ManagedType = pManagedType;

@@ -11,7 +11,8 @@ export default class ManualContainer extends Container {
 
 
 	/**
-	 * Create component instance and inject its dependencies on manual container
+	 * Create component instance on manual container
+	 * Since this container doesn't use decorators, dependencies have to be resolved manually
 	 * @param {string} key Registry key of component
 	 * @param {object} component Component to instantiate
 	 * @returns {object} Create manual component instance
@@ -21,20 +22,29 @@ export default class ManualContainer extends Container {
 			return this.resolveDependencies(component.Cls, depKeys);
 	}
 
+	/**
+	 * Get component instance from manual container
+	 * @param {string} key Component key
+	 * @returns {object} Component instance
+	 */
+	get(key) {
+		const component = super.getComponent(key);
+		return super.getComponentInstance(key, component);
+	}
 
 	/**
-	 * Register component on manual container
+ * Register component on ApplicationContext and bind container manually
 	 * @param {string} key Component key
 	 * @param {object} component Register component to container
 	 */
 	registerComponent(key, component) {
 		ApplicationContext.registerComponent(key, component);
-		super.registerComponent(key, component);
+		super.bindComponent(key);
 	}
 
 
 	/**
-	 * Register dependencies
+	 * Register dependencies on ApplicationContext
 	 * @param {string} key Key of component
 	 * @param {array} deps Array of dependencies as key strings
 	 */
@@ -45,7 +55,8 @@ export default class ManualContainer extends Container {
 
 
 	/**
-	 * Resolve dependencies, i.e. create instances of injected dependencies
+	 * Resolve dependencies, i.e. create instances of injected dependencies recursively
+	 * Manual containers assume constructor injection
 	 * @param {function} Cls Component class constructor
 	 * @param {array} dependencyKeys Array of dependencies as key strings
 	 * @returns {object} Returns component instances and their resolved dependencies

@@ -1,11 +1,14 @@
+import { ManagedType, Component, Inject } from "../../../../src";
 
 
-export default class ManualDemoSingleton {
+@Component(ManagedType.SINGLETON)
+export default class DemoSingleton {
 
-	constructor(depSingleton, depProto) {
-		this.depSingleton = depSingleton;
-		this.depProto = depProto;
-	}
+	@Inject()
+	depSingleton;
+
+	@Inject()
+	depProto;
 
 
 	getSingletonDependency(){

@@ -1,34 +1,34 @@
 
-import ManualDemoSingleton from "./components/ManualDemoSingleton";
-import ManualDemoSingleton2 from "./components/ManualDemoSingleton2";
-import ManualDepSingleton from "./components/ManualDepSingleton";
-import ManualDepProto from "./components/ManualDepProto";
+import WithConfigSingleton from "./components/WithConfigSingleton";
+import WithConfigSingleton2 from "./components/WithConfigSingleton2";
+import WithConfigDepSingleton from "./components/WithConfigDepSingleton";
+import WithConfigDepProto from "./components/WithConfigDepProto";
 
-import { ManagedType } from "../../../../lib";
+import { ManagedType } from "../../../../src";
 
 
 export default {
 	manualDemoSingleton: {
 		managedType: ManagedType.SINGLETON,
 		dependencies: ['manualDepSingleton', 'manualDepProto'],
-		Cls: ManualDemoSingleton
+		Cls: WithConfigSingleton
 	},
 
 	manualDemoSingleton2: {
 		managedType: ManagedType.SINGLETON,
 		dependencies: ['manualDepSingleton', 'manualDepProto'],
-		Cls: ManualDemoSingleton2
+		Cls: WithConfigSingleton2
 	},
 
 	manualDepSingleton: {
 		managedType: ManagedType.SINGLETON,
 		dependencies: ['manualDepProto'],
-		Cls: ManualDepSingleton
+		Cls: WithConfigDepSingleton
 	},
 
 	manualDepProto: {
 		managedType: ManagedType.PROTOTYPE,
-		Cls: ManualDepProto
+		Cls: WithConfigDepProto
 	}
 
 }

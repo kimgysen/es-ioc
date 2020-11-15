@@ -35,3 +35,12 @@ export const InjectDecorator = () =>
 		}
 	});
 }
+
+export const ConfigDecorator = () =>
+		target => {
+			const methods = Object
+				.getOwnPropertyNames( target.prototype )
+				.filter(name => name !== 'constructor')
+				.forEach(method =>
+					AppCtx.registerOverride(method, target.prototype[method]()));
+	};

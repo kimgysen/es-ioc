@@ -1,33 +1,60 @@
 import ManagedType from "../enum/ManagedType";
 import ApplicationContext from "../ApplicationContext";
+import {mapToObj} from "../../util/jsonUtil";
 
 
 export default class Container {
 
 	#registry = new Map();
 	#singletons = new Map();
-
+	#overrides = new Map();
 
 	constructor(containerName) {
 		this.name = containerName;
 	}
 
+	/**
+	 * Get component from registry
+	 * @param {string} key Component key
+	 * @returns {object} Component
+	 */
+	getComponent(key) {
+		return this.#registry.get(key);
+	}
 
 	/**
 	 * Bind AppContext component to container
 	 * @param {string} key Component key
+	 * @returns {object} The registered component
 	 */
-	#bindComponent(key) {
+	bindComponent(key) {
 		const component = ApplicationContext.getComponent(key);
-		this.registerComponent(key, component);
+		if (component) {
+			this.#registry.set(key, component);
+		}
+		return component;
 	}
 
+	/**
+	 * Bind AppContext override instance from @Configuration to container
+	 * @param {string} key Override key
+	 * @returns {object} The registered override instance
+	 */
+	bindOverride(key) {
+		const override = ApplicationContext.getOverride(key);
+		if (override) {
+			this.#overrides.set(key, override);
+		}
+		return override;
+	}
 
 	/**
 	 * Create component instance
+	 * Dependency injection is per default handled by decorators
+	 * Manual registration can be  done through the subclass ManualContainer
 	 * @param key Component key
 	 * @param component Has format { managedType, Cls }
-	 * @returns { Object }
+	 * @returns {object}
 	 */
 	createInstance(key, component) {
 		return new component.Cls();
@@ -35,25 +62,31 @@ export default class Container {
 
 
 	/**
-	 * Register component to container
-	 * @param {string} key Registry key of component
-	 * @param {object} component
-	 */
-	registerComponent(key, component) {
-		this.#registry
-			.set(key, component);
-	}
-
-
-	/**
 	 * Get component instance from container
+	 * For decorated components, container binding happens when a component instance is requested
 	 * @param {string} key Component key
 	 * @returns {object} Return Component instance
 	 */
 	get(key) {
-		this.#bindComponent(key);
-		const component = this.#registry.get(key);
+		const override = this.bindOverride(key);
 
+		if (override) {
+			return override;
+
+		} else {
+			const component = this.bindComponent(key);
+			return this.getComponentInstance(key, component);
+
+		}
+	}
+
+	/**
+	 * Get component instance from container
+	 * @param {string} key Component key
+	 * @param {object} component Component
+	 * @returns {object} Return Component instance
+	 */
+	getComponentInstance(key, component) {
 		if (!component) {
 			throw new Error('component ' + key + ' not found.');
 		}
@@ -77,22 +110,21 @@ export default class Container {
 		}
 	}
 
-
 	/**
 	 * Get component key of all components managed by the container
-	 * @returns {array} Array of component keys
+	 * @returns {array} Array of component key strings
 	 */
-	getAllComponents() {
+	getComponentKeys() {
 		return Array.from(this.#registry.keys());
 	}
 
-
 	/**
-	 * Get json tree of all instances and their dependencies as a tree
-	 * @returns {object} Json tree
+	 * Get json object of all instances and their dependencies as key strings
+	 * @returns {object} Json object
 	 */
 	toJSON() {
-		return ApplicationContext.getTree(this);
+		return mapToObj(
+			ApplicationContext.getDependencyMap(this));
 	}
 
 }

@@ -1,4 +1,4 @@
-import { ManagedType, Component, Inject } from "../../../../../lib";
+import { ManagedType, Component, Inject } from "../../../../../src";
 
 
 @Component(ManagedType.SINGLETON)

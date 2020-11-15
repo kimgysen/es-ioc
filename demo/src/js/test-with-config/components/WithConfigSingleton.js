@@ -1,9 +1,19 @@
 
-export default class ManualDemoSingleton2 {
+
+export default class WithConfigSingleton {
 
 	constructor(depSingleton, depProto) {
 		this.depSingleton = depSingleton;
 		this.depProto = depProto;
+	}
+
+
+	getSingletonDependency(){
+		return this.depSingleton;
+	}
+
+	getPrototypeDependency() {
+		return this.depProto;
 	}
 
 	logSingleton() {

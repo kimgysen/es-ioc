@@ -1,9 +1,9 @@
 
 
-export default class ManualDepSingleton {
+export default class FullManualDepSingleton {
 
-	constructor(manualDepProto) {
-		this.manualDepProto = manualDepProto;
+	constructor(fullManualDepProto) {
+		this.fullManualDepProto = fullManualDepProto;
 	}
 
 	log(){

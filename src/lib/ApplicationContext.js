@@ -1,6 +1,5 @@
 import Container from "./container/Container";
 import ManualContainer from './container/ManualContainer';
-import {mapToObj} from "../util/jsonUtil";
 
 
 let scopedContainer = '';
@@ -8,6 +7,7 @@ let scopedContainer = '';
 const containerRegistry = new Map();
 const componentRegistry = new Map();
 const dependencyRegistry = new Map();
+const overridesRegistry = new Map();
 
 
 /**
@@ -29,7 +29,7 @@ const	getContainer = (name) => findOrdCreateContainer(name);
  * Get container from ApplicationContext
  * Manual means that the container registers its dependencies manually, not through decorators / annotations
  * @param name
- * @returns {*}
+ * @returns {object} Returns a proxy to the original container
  */
 const getManualContainer = name => findOrdCreateContainer(name, true);
 
@@ -98,6 +98,13 @@ const registerComponent = (key, component) => {
 const getComponent = key => componentRegistry.get(key);
 
 /**
+ * Get override from the ApplicationContext
+ * @param {string} key Override key
+ * @returns {object} Returns the requested override
+ */
+const getOverride = key => overridesRegistry.get(key);
+
+/**
  * Register dependency to the ApplicationContext
  * The dependency registry is formatted as { 'dependent': [ dependencies ] }
  * @param {string} key Component key
@@ -114,6 +121,15 @@ const registerDependency = (key, dependency) => {
 }
 
 /**
+ * Register a component instance that overrides the default component injection through @Configuration
+ * @param {string} key
+ * @param {object} instance
+ */
+const registerOverride = (key, instance) => {
+	overridesRegistry.set(key, instance);
+}
+
+/**
  * Get dependencies from ApplicationContext
  * @param {string} key Component key
  * @returns {array} Dependencies for a component as an array of key strings
@@ -126,15 +142,14 @@ const getDependencies = key => dependencyRegistry.get(key);
  * @param {object} container Proxy to the original container
  * @returns {object} Json tree
  */
-const getTree = container => {
+const getDependencyMap = container => {
 	const containerComponents = containerRegistry
 		.get(container.name)
-		.getAllComponents();
+		.getComponentKeys();
 
-	const dependencies = new Map([...dependencyRegistry]
+	return new Map([...dependencyRegistry]
 		.filter(([key]) => containerComponents.includes(key)));
 
-	return mapToObj(dependencies);
 }
 
 
@@ -143,8 +158,10 @@ export default {
 	getContainer,
 	getManualContainer,
 	registerComponent,
+	registerOverride,
 	getComponent,
+	getOverride,
 	registerDependency,
 	getDependencies,
-	getTree
+	getDependencyMap
 };

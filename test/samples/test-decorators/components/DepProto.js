@@ -1,4 +1,4 @@
-import { ManagedType, Component } from "../../../../../src";
+import { ManagedType, Component } from "../../../../../lib";
 
 
 @Component(ManagedType.PROTOTYPE)

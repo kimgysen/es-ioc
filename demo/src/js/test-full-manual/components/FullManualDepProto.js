@@ -1,6 +1,6 @@
 
 
-export default class ManualDepProto {
+export default class FullManualDepProto {
 
 	log(){
 		console.log('Prototype dependency logged');

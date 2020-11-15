@@ -1,15 +1,15 @@
 
 TODO: 
 
-- Pass custom parameters
-- Create demo that is more clear 
-- Validate annotation props 
-- Limited api for container 
+- Set Runtime object
+- How to unit test injections
+
 - Write tests 
-- Tree shaking manual vs annotations (isolation)
 - Publish to npm 
 - Write documentation (readme)
 
+- Allow manual instance name definitions
+- Create component instance injecting dependencies manually
 
 Social: 
 - Write blog post 
