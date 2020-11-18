@@ -4,7 +4,7 @@ import './components/DemoSingleton';
 import './components/DemoSingleton2';
 import './components/DepProto';
 import './components/DepSingleton';
-import './components/RuntimeDepProto';
+import './components/RuntimeDependency';
 
 import treeify from 'treeify';
 

@@ -11,6 +11,7 @@ import {
 } from "../../../../src";
 
 import treeify from "treeify";
+import RuntimeDependency from "./components/RuntimeDependency";
 
 
 console.log('******************************************');
@@ -33,6 +34,9 @@ try {
 
 	const container = getManualContainer('full-manual-container');
 	setupContainer(container);
+
+	const logStr = 'Runtime dependency with factory works';
+	container.registerOverride('fullManualDepProto', () => new RuntimeDependency(logStr))
 
 	const singleton = container.get('fullManualSingleton');
 	singleton.logSingleton();

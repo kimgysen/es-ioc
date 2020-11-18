@@ -1,6 +1,6 @@
 import ManagedType from "../enum/ManagedType";
 import ApplicationContext from "../ApplicationContext";
-import {mapToObj} from "../../util/jsonUtil";
+import {mapObjToTree, mapToObj} from "../../util/JsonUtil";
 
 
 export default class Container {
@@ -20,6 +20,15 @@ export default class Container {
 	 */
 	getComponent(key) {
 		return this.#registry.get(key);
+	}
+
+	/**
+	 * Get override instance
+	 * @param {string} key Component key overridden
+	 * @returns {object} The override instance
+	 */
+	getOverride(key) {
+		return this.#overrides.get(key);
 	}
 
 	/**
@@ -123,8 +132,10 @@ export default class Container {
 	 * @returns {object} Json object
 	 */
 	toJSON() {
-		return mapToObj(
-			ApplicationContext.getDependencyMap(this));
+		return mapObjToTree(
+			mapToObj(
+				ApplicationContext.getDependencyMap(this))
+		);
 	}
 
 }

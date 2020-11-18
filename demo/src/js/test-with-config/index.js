@@ -6,21 +6,24 @@ import {
 } from "../../../../src";
 
 import treeify from "treeify";
+import RuntimeDependency from "./components/RuntimeDependency";
+
 
 console.log('****************************************************');
 console.log('*** Test with manual registration through config ***');
 console.log('****************************************************');
 
-
 try {
 	const container = getManualContainer('with-config-container');
 
 	container.fromJSON(config);
+	container.registerOverride('manualDepProto', new RuntimeDependency)
 
-	const cont1_singleton1 = container.get('manualDemoSingleton');
 
-	cont1_singleton1.logSingleton();
-	cont1_singleton1.logPrototype();
+	const singleton = container.get('manualDemoSingleton');
+
+	singleton.logSingleton();
+	singleton.logPrototype();
 
 
 	console.log(

@@ -1,6 +1,7 @@
 import Container from "./Container";
 import {validateConfig} from "./ValidateConfig";
 import ApplicationContext from "../ApplicationContext";
+import {isFunction} from "../../util/FuncUtil";
 
 
 export default class ManualContainer extends Container {
@@ -28,8 +29,16 @@ export default class ManualContainer extends Container {
 	 * @returns {object} Component instance
 	 */
 	get(key) {
-		const component = super.getComponent(key);
-		return super.getComponentInstance(key, component);
+		const override = super.getOverride(key);
+
+		if (override) {
+			return override;
+
+		} else {
+			const component = super.getComponent(key);
+			return super.getComponentInstance(key, component);
+
+		}
 	}
 
 	/**
@@ -42,6 +51,19 @@ export default class ManualContainer extends Container {
 		super.bindComponent(key);
 	}
 
+	/**
+	 * Register override manually (same as @Configuration does for decorators)
+	 * @param {string} key
+	 * @param {Function} override (Either factory or instance)
+	 */
+	registerOverride(key, override) {
+		let instance = isFunction(override)
+			? override()
+			: override;
+
+		ApplicationContext.registerOverride(key, instance);
+		super.bindOverride(key);
+	}
 
 	/**
 	 * Register dependencies on ApplicationContext
@@ -63,13 +85,22 @@ export default class ManualContainer extends Container {
 	 */
 	resolveDependencies(Cls, dependencyKeys) {
 		const depInstances = dependencyKeys.map(depKey => {
-			const depComponent = ApplicationContext.getComponent(depKey);
-			const subDepKeys = ApplicationContext.getDependencies(depKey);
+			const override = super.getOverride(depKey);
 
-			if (subDepKeys.length > 0) {
-				return this.resolveDependencies(depComponent.Cls, subDepKeys);
+			if (override) {
+				return override;
+
 			} else {
-				return new depComponent.Cls();
+				const depComponent = ApplicationContext.getComponent(depKey);
+				const subDepKeys = ApplicationContext.getDependencies(depKey);
+
+				if (subDepKeys.length > 0) {
+					return this.resolveDependencies(depComponent.Cls, subDepKeys);
+
+				} else {
+					return new depComponent.Cls();
+				}
+
 			}
 		});
 

@@ -86,9 +86,7 @@ const getContainerProxy = container => {
  * @param {string} key
  * @param {object} component Component to be registered
  */
-const registerComponent = (key, component) => {
-	componentRegistry.set(key, component);
-}
+const registerComponent = (key, component) => componentRegistry.set(key, component);
 
 /**
  * Get component from the ApplicationContext

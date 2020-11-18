@@ -1,14 +1,13 @@
 
 import {Configuration} from "../../../../src";
-import RuntimeDepProto from "./components/RuntimeDepProto";
+import RuntimeDependency from "./components/RuntimeDependency";
 
 
 @Configuration()
 export default class AppConfig {
 
-
 	depProto() {
-		return new RuntimeDepProto();
+		return new RuntimeDependency();
 	}
 
 }
