@@ -2,6 +2,7 @@ import Container from "./Container";
 import {validateConfig} from "./ValidateConfig";
 import ApplicationContext from "../ApplicationContext";
 import {isFunction} from "../../util/FuncUtil";
+import ManagedType from "../enum/ManagedType";
 
 
 export default class ManualContainer extends Container {
@@ -10,39 +11,8 @@ export default class ManualContainer extends Container {
 		super(containerName);
 	}
 
-
 	/**
-	 * Create component instance on manual container
-	 * Since this container doesn't use decorators, dependencies have to be resolved manually
-	 * @param {string} key Registry key of component
-	 * @param {object} component Component to instantiate
-	 * @returns {object} Create manual component instance
-	 */
-	createInstance(key, component) {
-			const depKeys = ApplicationContext.getDependencies(key);
-			return this.resolveDependencies(component.Cls, depKeys);
-	}
-
-	/**
-	 * Get component instance from manual container
-	 * @param {string} key Component key
-	 * @returns {object} Component instance
-	 */
-	get(key) {
-		const override = super.getOverride(key);
-
-		if (override) {
-			return override;
-
-		} else {
-			const component = super.getComponent(key);
-			return super.getComponentInstance(key, component);
-
-		}
-	}
-
-	/**
- * Register component on ApplicationContext and bind container manually
+	 * Register component on ApplicationContext and bind container manually
 	 * @param {string} key Component key
 	 * @param {object} component Register component to container
 	 */
@@ -60,9 +30,32 @@ export default class ManualContainer extends Container {
 		let instance = isFunction(override)
 			? override()
 			: override;
-
 		ApplicationContext.registerOverride(key, instance);
 		super.bindOverride(key);
+	}
+
+	/**
+	 * Create component instance on manual container
+	 * Since this container doesn't use decorators, dependencies have to be resolved manually
+	 * @param {string} key Registry key of component
+	 * @param {object} component Component to instantiate
+	 * @returns {object} Create manual component instance
+	 */
+	createInstance(key, component) {
+		const depKeys = ApplicationContext.getDependencies(key);
+		return new component.Cls(
+			...this.resolveDependencies(depKeys));
+	}
+
+	/**
+	 * Get component instance from manual container
+	 * @param {string} key Component key
+	 * @returns {object} Component instance
+	 */
+	get(key) {
+		const override = super.getOverride(key);
+		const component = super.getComponent(key);
+		return super.getComponentInstance(key, component, override);
 	}
 
 	/**
@@ -79,32 +72,35 @@ export default class ManualContainer extends Container {
 	/**
 	 * Resolve dependencies, i.e. create instances of injected dependencies recursively
 	 * Manual containers assume constructor injection
-	 * @param {function} Cls Component class constructor
-	 * @param {array} dependencyKeys Array of dependencies as key strings
-	 * @returns {object} Returns component instances and their resolved dependencies
+	 * @param {set} dependencyKeys Set of dependencies as key strings
+	 * @returns {array} Returns an array of resolved dependencies
 	 */
-	resolveDependencies(Cls, dependencyKeys) {
-		const depInstances = dependencyKeys.map(depKey => {
+	resolveDependencies(dependencyKeys = new Set()) {
+		return Array.from(dependencyKeys).map(depKey => {
 			const override = super.getOverride(depKey);
+			const singleton = super.getSingleton(depKey);
 
 			if (override) {
 				return override;
+
+			} else if (singleton) {
+				return singleton;
 
 			} else {
 				const depComponent = ApplicationContext.getComponent(depKey);
 				const subDepKeys = ApplicationContext.getDependencies(depKey);
 
-				if (subDepKeys.length > 0) {
-					return this.resolveDependencies(depComponent.Cls, subDepKeys);
+				let instance = subDepKeys.size > 0
+					? new depComponent.Cls(...this.resolveDependencies(subDepKeys))
+					: new depComponent.Cls();
 
-				} else {
-					return new depComponent.Cls();
+				if (depComponent.managedType === ManagedType.SINGLETON) {
+					super.registerSingleton(depKey, instance);
 				}
 
+				return instance;
 			}
 		});
-
-		return new Cls(...depInstances);
 	}
 
 

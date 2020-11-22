@@ -21,7 +21,6 @@ export const ComponentDecorator = (managedType) =>
  */
 export const InjectDecorator = () =>
 	(target, key, descriptor) => {
-
 	const registryKey = lowerCaseFirstLetter(target.constructor.name);
 	const dependency = lowerCaseFirstLetter(key);
 	AppCtx.registerDependency(registryKey, dependency);
@@ -41,5 +40,5 @@ export const ConfigDecorator = () =>
 		Object
 			.getOwnPropertyNames( target.prototype )
 			.filter(name => name !== 'constructor')
-			.forEach(method =>
-				AppCtx.registerOverride(method, target.prototype[method]()));
+			.forEach(key =>
+				AppCtx.registerOverride(key, target.prototype[key]()));

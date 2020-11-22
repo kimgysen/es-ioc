@@ -1,6 +1,7 @@
 import ManagedType from "../enum/ManagedType";
 import ApplicationContext from "../ApplicationContext";
 import {mapObjToTree, mapToObj} from "../../util/JsonUtil";
+import {clazzHasProp} from "../../util/FuncUtil";
 
 
 export default class Container {
@@ -14,12 +15,44 @@ export default class Container {
 	}
 
 	/**
+	 * Resolve overrides when singletons
+	 * @param instance
+	 * @returns {*}
+	 */
+	#resolveOverrides(instance) {
+		for (let [key, override] of this.#overrides) {
+			if (instance.hasOwnProperty(key)) {
+				instance[key] = override;
+			}
+		}
+		return instance;
+	}
+
+	/**
+	 * Store singleton instance in singletons registry
+	 * @param {string} key Singleton component key
+	 * @param {object} singleton The singleton instance
+	 */
+	registerSingleton(key, singleton) {
+		this.#singletons.set(key, singleton);
+	}
+
+	/**
 	 * Get component from registry
 	 * @param {string} key Component key
 	 * @returns {object} Component
 	 */
 	getComponent(key) {
 		return this.#registry.get(key);
+	}
+
+	/**
+	 * Get singleton from singletons registry
+	 * @param {string} key Singleton key
+	 * @returns {object} Singleton component
+	 */
+	getSingleton(key) {
+		return this.#singletons.get(key);
 	}
 
 	/**
@@ -57,18 +90,18 @@ export default class Container {
 		return override;
 	}
 
+
 	/**
 	 * Create component instance
 	 * Dependency injection is per default handled by decorators
-	 * Manual registration can be  done through the subclass ManualContainer
-	 * @param key Component key
-	 * @param component Has format { managedType, Cls }
-	 * @returns {object}
+	 * Manual registration can be  done through the subclass ManualContainer, which overrides this method
+	 * @param {string} key Component key
+	 * @param {object} component Has format { managedType, Cls }
+	 * @returns {object} Created instance
 	 */
 	createInstance(key, component) {
 		return new component.Cls();
 	}
-
 
 	/**
 	 * Get component instance from container
@@ -78,45 +111,46 @@ export default class Container {
 	 */
 	get(key) {
 		const override = this.bindOverride(key);
-
-		if (override) {
-			return override;
-
-		} else {
-			const component = this.bindComponent(key);
-			return this.getComponentInstance(key, component);
-
-		}
+		const component = this.bindComponent(key);
+		return this.getComponentInstance(key, component, override);
 	}
 
 	/**
 	 * Get component instance from container
 	 * @param {string} key Component key
 	 * @param {object} component Component
+	 * @param {object} override Runtime override instance
 	 * @returns {object} Return Component instance
 	 */
-	getComponentInstance(key, component) {
+	getComponentInstance(key, component, override) {
 		if (!component) {
-			throw new Error('component ' + key + ' not found.');
+			throw new Error('Component ' + key + ' not available in the registry.');
 		}
 
-		switch (component.managedType) {
+		if (override) {
+			return override;
 
-			case ManagedType.SINGLETON:
-				const instance = this.#singletons.get(key);
+		} else {
+			switch (component.managedType) {
 
-				if (instance) {
-					return instance;
-				} else {
-					const singleton = this.createInstance(key, component);
-					this.#singletons.set(key, singleton);
-					return singleton;
-				}
+				case ManagedType.SINGLETON:
+					const instance = this.getSingleton(key);
 
-			case ManagedType.PROTOTYPE:
-				return this.createInstance(key, component);
+					if (instance) {
+						return this.#resolveOverrides(instance);
 
+					} else {
+						const singleton = this.createInstance(key, component);
+						this.registerSingleton(key, singleton);
+						return singleton;
+					}
+
+				case ManagedType.PROTOTYPE:
+					return this.createInstance(key, component);
+
+			}
 		}
+
 	}
 
 	/**

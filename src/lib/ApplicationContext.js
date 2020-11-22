@@ -22,7 +22,7 @@ const getScopedContainer = () => scopedContainer;
  * @param {string} name Name of the container
  * @returns {object} Returns a proxy to the original container
  */
-const	getContainer = (name) => findOrdCreateContainer(name);
+const getContainer = (name) => findOrdCreateContainer(name);
 
 
 /**
@@ -110,12 +110,11 @@ const getOverride = key => overridesRegistry.get(key);
  */
 const registerDependency = (key, dependency) => {
 	if (!dependencyRegistry.get(dependency))
-		dependencyRegistry.set(dependency, [])
+		dependencyRegistry.set(dependency, new Set())
 
-	const dependencies = dependencyRegistry.get(key) || [];
-	dependencies.push(dependency);
+	const dependencies = dependencyRegistry.get(key) || new Set();
+	dependencies.add(dependency);
 	dependencyRegistry.set(key, dependencies);
-
 }
 
 /**
@@ -123,14 +122,13 @@ const registerDependency = (key, dependency) => {
  * @param {string} key
  * @param {object} instance
  */
-const registerOverride = (key, instance) => {
+const registerOverride = (key, instance) =>
 	overridesRegistry.set(key, instance);
-}
 
 /**
  * Get dependencies from ApplicationContext
  * @param {string} key Component key
- * @returns {array} Dependencies for a component as an array of key strings
+ * @returns {set} Dependencies for a component as a set of key strings
  */
 const getDependencies = key => dependencyRegistry.get(key);
 
@@ -146,7 +144,7 @@ const getDependencyMap = container => {
 		.getComponentKeys();
 
 	return new Map([...dependencyRegistry]
-		.filter(([key]) => containerComponents.includes(key)));
+		.filter(([key]) => containerComponents.has(key)));
 
 }
 
