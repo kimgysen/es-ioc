@@ -1,7 +1,6 @@
 import ManagedType from "../enum/ManagedType";
 import ApplicationContext from "../ApplicationContext";
 import {mapObjToTree, mapToObj} from "../../util/JsonUtil";
-import {clazzHasProp} from "../../util/FuncUtil";
 
 
 export default class Container {
@@ -15,16 +14,20 @@ export default class Container {
 	}
 
 	/**
-	 * Resolve overrides when singletons
-	 * @param instance
-	 * @returns {*}
+	 * Resolve overrides on dependencies recursively
+	 * @param {object} instance
+	 * @returns The resolved instance
 	 */
 	#resolveOverrides(instance) {
-		for (let [key, override] of this.#overrides) {
-			if (instance.hasOwnProperty(key)) {
-				instance[key] = override;
+		const resolve = (instance, props) => props.forEach(dep => {
+			if (this.hasOverride(dep)) {
+				instance[dep] = this.#overrides.get(dep);
+			} else {
+				resolve(instance[dep], Object.keys(instance[dep]));
 			}
-		}
+		});
+
+		resolve(instance, Object.keys(instance));
 		return instance;
 	}
 
@@ -62,6 +65,15 @@ export default class Container {
 	 */
 	getOverride(key) {
 		return this.#overrides.get(key);
+	}
+
+	/**
+	 * Does override exist
+	 * @param {string} key Override key
+	 * @returns {boolean} Yes / no
+	 */
+	hasOverride(key) {
+		return this.#overrides.has(key);
 	}
 
 	/**

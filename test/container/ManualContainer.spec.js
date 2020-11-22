@@ -2,11 +2,11 @@
 import { describe, beforeEach, it } from '@jest/globals';
 
 import { getManualContainer, ManagedType } from "../../src";
-import DemoSingleton from "./test-components/DemoSingleton";
-import DemoSingleton2 from "./test-components/DemoSingleton2";
-import DepProto from "./test-components/DepProto";
-import DepSingleton from "./test-components/DepSingleton";
-import RuntimeDependency from "./test-components/RuntimeDependency";
+import DemoSingleton from "./test-components/manual/DemoSingleton";
+import DemoSingleton2 from "./test-components/manual/DemoSingleton2";
+import DepProto from "./test-components/manual/DepProto";
+import DepSingleton from "./test-components/manual/DepSingleton";
+import RuntimeDependency from "./test-components/manual/RuntimeDependency";
 
 
 describe('Test container', () => {
@@ -82,7 +82,6 @@ describe('Test container', () => {
 		container_1.registerOverride('depSingleton', () => new RuntimeDependency());
 
 		const demoSingletonAfterOverride = container_1.get('demoSingleton2');
-		console.log(demoSingletonAfterOverride);
 		const depSingleton = container_1.get('depSingleton');
 
 		expect(depSingleton).toBeInstanceOf(RuntimeDependency);

@@ -3,7 +3,7 @@ import { describe, it } from '@jest/globals';
 import { ComponentDecorator, InjectDecorator, ConfigDecorator } from "../../src/lib/decorator/Decorators";
 import ApplicationContext from "../../src/lib/ApplicationContext";
 import { getManualContainer, Inject, ManagedType } from "../../src";
-import RuntimeDependency from "./test-components/RuntimeDependency";
+import RuntimeDependency from "./test-components/manual/RuntimeDependency";
 
 // Test class declarations
 class TestDependencyCls {}
