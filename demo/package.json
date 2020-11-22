@@ -1,5 +1,5 @@
 {
-  "name": "simple-ioc",
+  "name": "demo-ioc",
   "version": "1.0.0",
   "description": "Multi-container ioc with decorators",
   "main": "src/js/index.js",

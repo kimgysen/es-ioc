@@ -1,12 +1,13 @@
 {
-  "name": "simple-ioc",
+  "name": "es-ioc",
   "version": "1.0.0",
   "description": "Multi-container ioc with decorators",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "compile": "babel -d lib/ src/",
     "prepublish": "npm run compile",
-    "test": "jest"
+    "test": "jest",
+    "jsdoc": "jsdoc -r ./src"
   },
   "author": "Kim Gysen <kim.gysen@gmail.com>",
   "license": "ISC",
