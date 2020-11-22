@@ -38,11 +38,11 @@ console.log(
 )
 
 console.log(
-	'Do the prototypes refer to the same instance? ',
+	'Do the prototypes refer to the same instance (yes -> overridden) ? ',
 	cont1_singleton1.depProto === cont1_singleton2.depProto
 )
 
-console.log('Override default implementation of depProto:');
+console.log('Override default implementation of depProto:', cont1_singleton1.depProto);
 
 
 
