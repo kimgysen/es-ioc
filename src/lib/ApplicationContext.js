@@ -144,7 +144,7 @@ const getDependencyMap = container => {
 		.getComponentKeys();
 
 	return new Map([...dependencyRegistry]
-		.filter(([key]) => containerComponents.has(key)));
+		.filter(([key]) => containerComponents.includes(key)));
 
 }
 

@@ -19,10 +19,10 @@ export const mapObjToTree = obj => {
 	const tree = {};
 
 	const resolveDeps = (subtree = {}, deps) => {
-		if (deps && deps.length > 0) {
+		if (deps && deps.size > 0) {
 			for (let dep of deps) {
 				const subDeps = obj[dep];
-				if(subDeps && subDeps.length > 0) {
+				if(subDeps && subDeps.size > 0) {
 					subtree[dep] = resolveDeps({}, subDeps);
 				} else {
 					subtree[dep] = {};
