@@ -1,5 +1,5 @@
 
-import {Configuration} from "../../../../src";
+import {Configuration} from "es-ioc";
 import RuntimeDependency from "./components/RuntimeDependency";
 
 

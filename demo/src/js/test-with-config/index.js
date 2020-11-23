@@ -3,7 +3,7 @@ import config from './config';
 
 import {
 	getManualContainer
-} from "../../../../src";
+} from "es-ioc";
 
 import treeify from "treeify";
 import RuntimeDependency from "./components/RuntimeDependency";

@@ -1,4 +1,4 @@
-import { ManagedType, Component, Inject } from "../../../../../src";
+import { ManagedType, Component, Inject } from "es-ioc";
 
 
 @Component(ManagedType.SINGLETON)
