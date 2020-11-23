@@ -8,7 +8,7 @@ import FullManualSingleton2 from "./components/FullManualSingleton2";
 import {
 	getManualContainer,
 	ManagedType
-} from "../../../../src";
+} from "es-ioc";
 
 import treeify from "treeify";
 import RuntimeDependency from "./components/RuntimeDependency";

@@ -4,7 +4,7 @@ import WithConfigSingleton2 from "./components/WithConfigSingleton2";
 import WithConfigDepSingleton from "./components/WithConfigDepSingleton";
 import WithConfigDepProto from "./components/WithConfigDepProto";
 
-import { ManagedType } from "../../../../src";
+import { ManagedType } from "es-ioc";
 
 
 export default {

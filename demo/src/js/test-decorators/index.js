@@ -10,7 +10,7 @@ import treeify from 'treeify';
 
 import {
 	getContainer
-} from "../../../../src";
+} from "es-ioc";
 
 console.log('*****************************');
 console.log('*** Test with decorators ***');

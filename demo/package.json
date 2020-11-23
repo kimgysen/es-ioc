@@ -12,7 +12,7 @@
   "author": "Kim Gysen <kim.gysen@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "es-ioc": "^1.0.0",
+    "es-ioc": "^1.0.0-rc.1",
     "treeify": "^1.1.0"
   },
   "devDependencies": {

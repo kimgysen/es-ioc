@@ -1,4 +1,4 @@
-import { ManagedType, Component } from "../../../../../src";
+import { ManagedType, Component } from "es-ioc";
 
 
 @Component(ManagedType.PROTOTYPE)
